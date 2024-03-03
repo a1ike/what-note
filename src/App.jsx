@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import pitchAnalyser from "pitch-analyser";
+import { twJoin } from "tailwind-merge";
 import "./App.css";
 import "./components/Background/index.css";
 import { Button } from "./components/Button";
@@ -11,13 +12,13 @@ export const App = () => {
 
   const analyser = new pitchAnalyser({
     callback: function (payload) {
-      console.log(payload); // E.g. { frequency: 220, note: "A3" }
+      console.log(payload); // E.g. { frequency: 220, note: "C3" }
       setCurrentNote(payload.note);
       setIsRecording(true);
     },
   });
 
-  function handleStart() {
+  function handleStartRecording() {
     analyser.initAnalyser().then(() => {
       // Start the analyser after initialisation
       analyser.startAnalyser();
@@ -38,7 +39,7 @@ export const App = () => {
       <div className="flex flex-col min-h-screen justify-center items-center p-10">
         <h1 className="mb-8 text-white text-6xl font-bold">What Note?</h1>
         <div>
-          <Button onClick={handleStart}>
+          <Button onClick={handleStartRecording} className={twJoin(isRecording && "opacity-50 cursor-not-allowed")}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -55,7 +56,7 @@ export const App = () => {
             </svg>
             Recognize
           </Button>
-          <Button onClick={handlePause}>
+          <Button onClick={handlePause} className={twJoin(!isRecording && "opacity-50 cursor-not-allowed")}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -72,8 +73,8 @@ export const App = () => {
         <h2 className="mt-6 text-white text-4xl">
           {!isRecording && `Press the "RECOGNIZE" button`}
           {isRecording && `Looks like it's a "`}
-          <span className="font-bold">{currentNote}</span>
-          {`" note`}
+          {isRecording && <span className="font-bold">{currentNote}</span>}
+          {isRecording && `" note`}
         </h2>
       </div>
     </>
